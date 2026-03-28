@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Invitation</title>
+
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Helvetica Neue", sans-serif;
+}
+
+body {
+  background: #0a0a0a;
+  color: white;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* шум фон */
+body::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 3px 3px;
+  animation: noise 2s infinite linear;
+  opacity: 0.2;
+}
+
+@keyframes noise {
+  from { transform: translate(0,0); }
+  to { transform: translate(-50px,-50px); }
+}
+
+.app {
+  width: 100%;
+  max-width: 420px;
+  padding: 20px;
+  z-index: 2;
+}
+
+/* карточка */
+.card {
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 24px;
+  padding: 28px;
+  backdrop-filter: blur(20px);
+  background: rgba(255,255,255,0.02);
+  position: relative;
+  overflow: hidden;
+  animation: fadeUp 1s ease;
+}
+
+/* светящийся бордер */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(120deg, transparent, white, transparent);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  animation: borderMove 4s linear infinite;
+}
+
+@keyframes borderMove {
+  0% { background-position: 0% }
+  100% { background-position: 200% }
+}
+
+/* текст */
+.title {
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeText 1s forwards 0.3s;
+}
+
+.info {
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding: 12px 0;
+  display: flex;
+  justify-content: space-between;
+  opacity: 0;
+  animation: fadeText 0.8s forwards;
+}
+
+.info:nth-child(2){ animation-delay:0.4s }
+.info:nth-child(3){ animation-delay:0.5s }
+.info:nth-child(4){ animation-delay:0.6s }
+.info:nth-child(5){ animation-delay:0.7s }
+
+.label { color: #888; }
+.value { font-weight: bold; }
+
+.question {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 16px;
+  opacity: 0;
+  animation: fadeText 1s forwards 0.8s;
+}
+
+/* кнопки */
+.buttons {
+  display: flex;
+  gap: 10px;
+}
+
+button {
+  flex: 1;
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+button::before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  background: white;
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.4s;
+}
+
+button:hover::before {
+  width: 250%;
+  height: 500%;
+}
+
+button span {
+  position: relative;
+  z-index: 1;
+}
+
+button:hover {
+  color: black;
+}
+
+button:active {
+  transform: scale(0.95);
+}
+
+/* успех */
+.success {
+  display: none;
+  text-align: center;
+  font-size: 18px;
+  padding: 30px;
+  animation: fadeUp 0.8s ease;
+}
+
+/* анимации */
+@keyframes fadeText {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="card" id="card">
+    <div class="title">INVITATION</div>
+
+    <div class="info">
+      <div class="label">FROM</div>
+      <div class="value">Me</div>
+    </div>
+
+    <div class="info">
+      <div class="label">TO</div>
+      <div class="value">You</div>
+    </div>
+
+    <div class="info">
+      <div class="label">DATE</div>
+      <div class="value">29.03.2026</div>
+    </div>
+
+    <div class="info">
+      <div class="label">TIME</div>
+      <div class="value">20:00</div>
+    </div>
+
+    <div class="info">
+      <div class="label">DRESS CODE</div>
+      <div class="value">SMART CASUAL</div>
+    </div>
+
+    <div class="question">
+      Will you go on a date with me?
+    </div>
+
+    <div class="buttons">
+      <button onclick="sendAnswer('YES')"><span>YES</span></button>
+      <button onclick="sendAnswer('NO')"><span>NO</span></button>
+    </div>
+  </div>
+
+  <div class="card success" id="success">
+    ✔ RESPONSE SENT  
+    <br><br>
+    See you soon 😏
+  </div>
+
+</div>
+
+<script>
+function sendAnswer(val) {
+  const formData = new FormData();
+  formData.append("answer", val);
+
+  fetch("https://formspree.io/f/xojpjprg", {
+    method: "POST",
+    body: formData,
+    headers: {
+      'Accept': 'application/json'
+    }
+  })
+  .then(() => {
+    document.getElementById("card").style.display = "none";
+    document.getElementById("success").style.display = "block";
+  })
+  .catch(() => {
+    alert("Ошибка отправки 😢");
+  });
+}
+</script>
+
+</body>
+</html>
