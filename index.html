@@ -24,29 +24,23 @@ body {
   position: relative;
 }
 
-/* шум фон */
+/* статичный фон с лёгким шумом для мобильных */
 body::after {
   content: "";
   position: absolute;
   width: 200%;
   height: 200%;
-  background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 3px 3px;
-  animation: noise 2s infinite linear;
-  opacity: 0.2;
+  opacity: 0.15;
 }
 
-@keyframes noise {
-  from { transform: translate(0,0); }
-  to { transform: translate(-50px,-50px); }
-}
-
+/* контейнер */
 .app {
   width: 100%;
   max-width: 420px;
   padding: 20px;
   z-index: 2;
-  position: relative;
 }
 
 /* карточка */
@@ -54,7 +48,7 @@ body::after {
   border: 1px solid rgba(255,255,255,0.1);
   border-radius: 24px;
   padding: 28px;
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
   background: rgba(255,255,255,0.02);
   position: relative;
   overflow: hidden;
@@ -123,7 +117,6 @@ body::after {
 }
 
 button {
-  flex: 1;
   padding: 14px;
   border-radius: 14px;
   border: 1px solid white;
@@ -194,6 +187,41 @@ button:active {
     transform: translateY(0) scale(1);
   }
 }
+
+/* модалка для разрешения музыки */
+#musicModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  flex-direction: column;
+  color: white;
+  text-align: center;
+  font-size: 18px;
+  height: 100%;
+  width: 100%;
+}
+.buttonYes{
+    flex: 1;
+}
+#playMusicBtn {
+  padding: 14px 28px;
+  border-radius: 14px;
+  border: 1px solid white;
+  background: transparent;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  height: 200px;
+}
 </style>
 </head>
 
@@ -202,7 +230,7 @@ button:active {
 <div class="app">
 
   <div class="card" id="card">
-    <div class="title">Invitation</div>
+    <div class="title">INVITATION</div>
 
     <div class="info">
       <div class="label">FROM</div>
@@ -230,12 +258,12 @@ button:active {
     </div>
 
     <div class="question">
-      When I first saw you, I was filled with happiness inside, even though I didn't know you, and now every time I see you, my heart fills with happiness. So can I look into your beautiful eyes again?
+      Will you go on a date with me?
     </div>
 
     <div class="buttons">
-      <button onclick="sendAnswer('YES')"><span>YES</span></button>
-      <button onclick="sendAnswer('NO')"><span>NO</span></button>
+      <button onclick="sendAnswer('YES')" class="buttonYes"><span>YES</span></button>
+      <button onclick="sendAnswer('NO')" class="buttonYes"><span>NO</span></button>
     </div>
   </div>
 
@@ -247,19 +275,27 @@ button:active {
 
 </div>
 
-<!-- Фоновая музыка -->
+<!-- фоновая музыка -->
 <audio id="bgMusic" loop>
   <source src="sound.mp3" type="audio/mpeg">
   Ваш браузер не поддерживает аудио.
 </audio>
 
+<!-- модалка разрешения музыки -->
+<div id="musicModal">
+  <div>Для лучшего впечатления включите фоновую музыку 🎵</div>
+  <button id="playMusicBtn">PLAY MUSIC</button>
+</div>
+
 <script>
 const music = document.getElementById("bgMusic");
+const modal = document.getElementById("musicModal");
+const playBtn = document.getElementById("playMusicBtn");
 
-// Включаем музыку после первого клика по странице
-document.body.addEventListener("click", () => {
-  if (music.paused) music.play();
-}, { once: true });
+playBtn.addEventListener("click", () => {
+  music.play().catch(() => console.log("Ошибка воспроизведения музыки"));
+  modal.style.display = "none";
+});
 
 function sendAnswer(val) {
   const formData = new FormData();
